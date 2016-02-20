@@ -1,0 +1,31 @@
+---
+- name: Setup locale
+  locale_gen: name=ru_RU.UTF-8 state=present
+
+- name: Add ruby repo
+  apt_repository: repo='ppa:brightbox/ruby-ng' state=present
+
+- name: Install stuff
+  apt: pkg={{ item }} update_cache=yes
+  with_items:
+    - git
+    - ruby2.1
+    - ruby2.1-dev
+    - ruby-switch
+    - bundler
+
+- name: Set default ruby
+  shell: ruby-switch --set ruby2.1
+
+- name: Checkout repo
+  sudo: no
+  git: repo=git@github.com:rocketbank/felix.git
+       dest=/home/ubuntu/felix
+       accept_hostkey=yes
+       key_file=/home/ubuntu/.ssh/id_rsa
+
+- name: Bundle
+  sudo: no
+  shell: bundle install --path vendor/bundle --quiet
+         chdir=/home/ubuntu/felix
+         removes=tmp/pids/thin.pid
