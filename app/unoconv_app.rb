@@ -10,7 +10,7 @@ class UnoconvApp
 
       `/usr/bin/unoconv -f pdf #{source_path} -o #{pdf_path}`
 
-      pdf = File.new('pdf_path', 'rb')
+      pdf = File.new(pdf_path, 'rb')
 
       [200, {}, pdf]
     else
